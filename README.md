@@ -2,6 +2,8 @@
 
 Сайт для притулку тварин. Спрощує усиновлення і керування базою тварин.
 
+**→ [Research: конкуренти, бенчмарк, патерни, висновки](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/research.html)**
+
 ---
 
 ## Структура репо
@@ -56,7 +58,7 @@ npm run dev
 
 | Етап | Статус |
 |---|---|
-| Research | [Зведений research](./research/research.md) · [Конкурентний аналіз](./research/competitive-analysis.md) · [Аналіз довіри до профілю](./research/trust-profile-analysis.md) |
+| Research | [▸ HTML](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/research.html) · [Зведений research](./research/research.md) · [Конкурентний аналіз](./research/competitive-analysis.md) · [Аналіз довіри до профілю](./research/trust-profile-analysis.md) |
 | Wireframes | — |
 | Concept | — |
 | Tokens | Чернетка |
