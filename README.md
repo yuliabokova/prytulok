@@ -56,7 +56,7 @@ npm run dev
 
 | Етап | Статус |
 |---|---|
-| Research | — |
+| Research | [Зведений research](./research/research.md) · [Конкурентний аналіз](./research/competitive-analysis.md) · [Аналіз довіри до профілю](./research/trust-profile-analysis.md) |
 | Wireframes | — |
 | Concept | — |
 | Tokens | Чернетка |

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prytulok — Competitive Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:        #FAF7F2;
+      --sand:         #E8E0D0;
+      --sand-light:   #F3EFE8;
+      --terra:        #C4622D;
+      --terra-bg:     #F9EDE6;
+      --amber:        #C97A10;
+      --amber-bg:     #FEF5E4;
+      --green:        #4E7D5E;
+      --green-bg:     #EBF3EE;
+      --blue:         #3A6EA8;
+      --blue-bg:      #EBF1F9;
+      --text:         #1E1714;
+      --text-2:       #6B6058;
+      --text-3:       #A39890;
+      --white:        #FFFFFF;
+      --border:       #E0D8CC;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── LAYOUT ── */
+    .page { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      padding: 40px 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: var(--white);
+    }
+    .sidebar-logo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--terra);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .sidebar-title {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .nav-group { margin-bottom: 24px; }
+    .nav-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
+      padding-left: 10px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 2px;
+      transition: all 0.12s;
+    }
+    .nav-link:hover { background: var(--sand-light); color: var(--text); }
+    .nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Main */
+    .main { flex: 1; padding: 56px 64px 96px; max-width: 880px; }
+
+    /* ── HEADER ── */
+    .page-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px;
+    }
+    .page-title { font-size: 32px; font-weight: 700; line-height: 1.15; margin-bottom: 10px; }
+    .page-desc { font-size: 15px; color: var(--text-2); max-width: 540px; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 64px; }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .tag-red    { background: #FDECEA; color: #A02020; }
+    .tag-amber  { background: var(--amber-bg); color: var(--amber); }
+    .tag-green  { background: var(--green-bg); color: var(--green); }
+    .tag-blue   { background: var(--blue-bg); color: var(--blue); }
+
+    .section-head h2 { font-size: 20px; font-weight: 700; }
+    .section-head p  { font-size: 13px; color: var(--text-2); }
+
+    /* ── COMPETITOR CARDS ── */
+    .cards { display: flex; flex-direction: column; gap: 12px; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      cursor: pointer;
+      user-select: none;
+      gap: 16px;
+    }
+    .card-header:hover { background: var(--sand-light); }
+
+    .card-name { font-size: 15px; font-weight: 700; }
+    .card-audience {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+    .card-pill {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-2);
+      background: var(--sand-light);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-cell {
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+    }
+    .card-cell:last-child { border-right: none; }
+
+    .cell-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+    .cell-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+    .highlight {
+      display: inline-block;
+      background: var(--terra-bg);
+      color: var(--terra);
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    /* ── CONCLUSIONS ── */
+    .conclusions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .c-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .c-block.full { grid-column: 1 / -1; }
+
+    .c-block-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 18px;
+    }
+
+    .insight-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    .insight-item { display: flex; gap: 14px; }
+    .insight-num {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+      margin-top: 1px;
+    }
+    .num-terra  { background: var(--terra-bg);  color: var(--terra); }
+    .num-amber  { background: var(--amber-bg);  color: var(--amber); }
+
+    .insight-text { font-size: 13.5px; line-height: 1.6; }
+    .insight-text strong { font-weight: 700; }
+
+    .q-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .q-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .q-box {
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { padding: 40px 24px 80px; }
+      .card-body { grid-template-columns: 1fr 1fr; }
+      .card-cell:nth-child(2) { border-right: none; }
+      .card-cell:nth-child(3) { border-top: 1px solid var(--border); grid-column: 1 / -1; border-right: none; }
+    }
+    @media (max-width: 600px) {
+      .page-title { font-size: 24px; }
+      .card-body { grid-template-columns: 1fr; }
+      .card-cell { border-right: none; border-top: 1px solid var(--border); }
+      .conclusions-grid { grid-template-columns: 1fr; }
+      .c-block.full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Prytulok</div>
+    <div class="sidebar-title">Research</div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Конкуренти</div>
+      <a class="nav-link" href="#hard">
+        <span class="nav-dot" style="background:#C4622D"></span> Хард — UA
+      </a>
+      <a class="nav-link" href="#soft">
+        <span class="nav-dot" style="background:#C97A10"></span> Софт — JTBD
+      </a>
+      <a class="nav-link" href="#aspirational">
+        <span class="nav-dot" style="background:#4E7D5E"></span> Аспіраційні
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Висновки</div>
+      <a class="nav-link" href="#patterns">Спільні патерни</a>
+      <a class="nav-link" href="#differences">Ключові відмінності</a>
+      <a class="nav-link" href="#questions">Відкриті питання</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="page-eyebrow">Competitive Analysis</div>
+    <h1 class="page-title">Хто вирішує схожу задачу<br>і де є вікно для Prytulok</h1>
+    <p class="page-desc">12 платформ у трьох категоріях: прямі конкуренти в Україні, продукти з тим самим JTBD та міжнародні еталони.</p>
+
+    <hr class="divider">
+
+    <!-- HARD -->
+    <section class="section" id="hard">
+      <div class="section-head">
+        <span class="tag tag-red">Хард</span>
+        <div>
+          <h2>Той самий продукт, Україна</h2>
+          <p>Де люди зараз шукають тварин для усиновлення</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Happy Paw</div>
+              <div class="card-audience">18–45 · усиновлювачі, донори · 400+ притулків</div>
+            </div>
+            <span class="card-pill">Агрегатор</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Каталог з 10+ фільтрами, але усиновлення завершується <span class="highlight">дзвінком поза платформою</span></div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Звіти з 2012 р., корп. партнери (Purina), публічна бухгалтерія</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Донати разові + щомісячні</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">UAnimals</div>
+              <div class="card-audience">22–40 · активісти, донори з 38 країн</div>
+            </div>
+            <span class="card-pill">Правозахист</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Кампанії з прогрес-барами + дедлайнами — FOMO-донація, <span class="highlight">не пошук тварини</span></div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">«715 000 тварин врятовано», сертифікація CAF America</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Щомісячний клуб, мерч, секонд-хенд</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Sirius</div>
+              <div class="card-audience">Усиновлювачі Київ+ · донори</div>
+            </div>
+            <span class="card-pill">Один притулок</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Пошук → форма заявки → <span class="highlight">обов'язковий фото-звіт</span> після усиновлення</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">«10 000+ усиновлень» за 26 років, публічні фінзвіти</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Разові донати + підписки</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">OLX Тварини</div>
+              <div class="card-audience">18–55 · широка аудиторія</div>
+            </div>
+            <span class="card-pill">Класифайд</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Пошук за фільтрами, контакт напряму з продавцем</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Рейтинги продавців, бренд №1 класифайд в UA</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Платне просування оголошень</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SOFT -->
+    <section class="section" id="soft">
+      <div class="section-head">
+        <span class="tag tag-amber">Софт</span>
+        <div>
+          <h2>Інший продукт, той самий JTBD</h2>
+          <p>Платформи, що вирішили задачі вибору і довіри краще за shelter-сайти</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Tinder</div>
+              <div class="card-audience">18–35 · одинаки</div>
+            </div>
+            <span class="card-pill">Матчинг</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Swipe: <span class="highlight">один профіль за раз</span> — бінарне рішення, усуває паралізацію вибору</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">55 млрд. матчів, safety-фреймворк</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Freemium: ліміти на свайпи → Gold/Platinum</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Booking.com</div>
+              <div class="card-audience">25–55 · мандрівники</div>
+            </div>
+            <span class="card-pill">Конверсія</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value"><span class="highlight">4 тригери</span>: дефіцит + соц. доказ + активність + терміновість → +20–30% конверсія</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Оцінки, verified reviews, free cancellation</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Комісія ~15% з об'єктів</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Work.ua</div>
+              <div class="card-audience">UA ринок · шукачі роботи</div>
+            </div>
+            <span class="card-pill">Алерти</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Профіль шукача → матчинг + <span class="highlight">email-алерти</span> на нові збіги</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">№1 з 2006 р., великі бренди-роботодавці</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Платні вакансії для роботодавців</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Airbnb</div>
+              <div class="card-audience">25–40 · досвід-орієнтовані</div>
+            </div>
+            <span class="card-pill">Trust-first</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value"><span class="highlight">Category tabs</span> — стиль-матчинг без явного пошуку</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Верифікація, взаємні рейтинги, Superhost</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Комісія: ~3% хост + ~14% гість</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ASPIRATIONAL -->
+    <section class="section" id="aspirational">
+      <div class="section-head">
+        <span class="tag tag-green">Аспіраційні</span>
+        <div>
+          <h2>Міжнародні еталони</h2>
+          <p>Кращі shelter-платформи світу як планка якості досвіду</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Petfinder</div>
+              <div class="card-audience">Північна Америка · 2M+ MAU</div>
+            </div>
+            <span class="card-pill">Агрегатор B2B</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Мультифільтр + збережені пошуки + email-алерти + <span class="highlight">«Sponsor this pet»</span></div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Верифіковані орг., 600 000 усиновлень/рік</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">B2B підписки для притулків $25–100/міс.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Adopt-a-Pet</div>
+              <div class="card-audience">Пн. Америка · 15 000+ орг.</div>
+            </div>
+            <span class="card-pill">Некомерційний</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Форма з підказками; <span class="highlight">Rehome</span> — власник → усиновлювач без притулку</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Некомерційний статус, 15 000+ партнерів</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Платне просування для притулків</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">Best Friends</div>
+              <div class="card-audience">US · усиновлювачі + донори</div>
+            </div>
+            <span class="card-pill">Story-driven</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value"><span class="highlight">Квіз</span> «Which type of besties are you?» → story → CTA</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">4 зірки Charity Navigator, 87% витрат на програми</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Донати, planned giving, корп. партнерства</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-name">RSPCA</div>
+              <div class="card-audience">Англія і Уельс</div>
+            </div>
+            <span class="card-pill">SLA-стандарт</span>
+          </div>
+          <div class="card-body">
+            <div class="card-cell">
+              <div class="cell-label">Ключовий механізм</div>
+              <div class="cell-value">Прогресивне розкриття → профіль → форма → <span class="highlight">SLA 48 год. відповіді</span></div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Довіра</div>
+              <div class="cell-value">Реєстраційний № благодійності, «70 тварин/день»</div>
+            </div>
+            <div class="card-cell">
+              <div class="cell-label">Монетизація</div>
+              <div class="cell-value">Донати, adoption fees, спонсорство</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CONCLUSIONS -->
+    <section class="section" id="conclusions">
+      <div class="section-head">
+        <span class="tag tag-blue">Висновки</span>
+        <div>
+          <h2>Що це означає для Prytulok</h2>
+        </div>
+      </div>
+
+      <div class="conclusions-grid">
+
+        <div class="c-block" id="patterns">
+          <div class="c-block-title">3 спільні патерни</div>
+          <ul class="insight-list">
+            <li class="insight-item">
+              <span class="insight-num num-terra">1</span>
+              <span class="insight-text"><strong>Фото = рішення.</strong> Tinder, Airbnb, Petfinder — зображення домінує над текстом. Усиновлення починається з емоції. Українські сайти порушують це через низьку якість фото.</span>
+            </li>
+            <li class="insight-item">
+              <span class="insight-num num-terra">2</span>
+              <span class="insight-text"><strong>Воронка обривається в найгіршому місці.</strong> Happy Paw, Sirius — фінальний крок «зателефонуй за номером». Жоден не тримає користувача всередині до підтвердження заявки.</span>
+            </li>
+            <li class="insight-item">
+              <span class="insight-num num-terra">3</span>
+              <span class="insight-text"><strong>Impact-цифри = довіра.</strong> «600 000 усиновлень/рік», «70 тварин/день» — скрізь є конкретне число. Українські сайти мають ці цифри але ховають їх.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="c-block" id="differences">
+          <div class="c-block-title">3 ключові відмінності</div>
+          <ul class="insight-list">
+            <li class="insight-item">
+              <span class="insight-num num-amber">1</span>
+              <span class="insight-text"><strong>Aspirational платформи живуть на B2B.</strong> Petfinder бере $25–100/міс. з притулків — це фінансує безкоштовний UX. Українські сайти — чисто донатна модель.</span>
+            </li>
+            <li class="insight-item">
+              <span class="insight-num num-amber">2</span>
+              <span class="insight-text"><strong>Post-application — сліпа зона скрізь, крім RSPCA.</strong> SLA 48 год. — єдиний стандарт у категорії. Відкриває вікно для Prytulok.</span>
+            </li>
+            <li class="insight-item">
+              <span class="insight-num num-amber">3</span>
+              <span class="insight-text"><strong>Soft-конкуренти вирішили UX-задачі, яких shelter-сайти не помітили.</strong> Tinder — одна картка замість сітки з 50. Airbnb — lifestyle-tabs. Work.ua — email-алерти.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="c-block full" id="questions">
+          <div class="c-block-title">3 відкриті питання</div>
+          <ul class="q-list">
+            <li class="q-item">
+              <span class="q-box"></span>
+              Скільки людей насправді телефонують після Happy Paw / Sirius? Якщо конверсія там — одиниці відсотків, in-product форма стає найвищим ROI-рішенням.
+            </li>
+            <li class="q-item">
+              <span class="q-box"></span>
+              Чи може один притулок конкурувати з Happy Paw (17 800 тварин) на розмірі бази — чи треба брати якістю досвіду і повнотою воронки?
+            </li>
+            <li class="q-item">
+              <span class="q-box"></span>
+              Наскільки воєнний контекст змінює JTBD? Вимушено віддані тварини, тимчасова передержка — чи варто додати «фостер» як окремий шлях поряд з усиновленням?
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>

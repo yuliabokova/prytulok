@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prytulok — Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0D0D0D;
+      --surface:  #161616;
+      --surface2: #1E1E1E;
+      --border:   #272727;
+      --border2:  #323232;
+      --text:     #EDEBE8;
+      --text2:    #888480;
+      --text3:    #555250;
+      --accent:   #E8643A;
+      --accent2:  #C44E26;
+      --green:    #4BB876;
+      --yellow:   #E8B84B;
+      --red:      #E05858;
+      --blue:     #5B9BD5;
+      --r:        8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,13,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 48px;
+    }
+    .nav-brand { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-decoration: none; }
+    nav a { font-size: 13px; color: var(--text2); text-decoration: none; transition: color .15s; }
+    nav a:hover { color: var(--text); }
+    .nav-date { margin-left: auto; font-size: 12px; color: var(--text3); }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 64px 32px 96px; }
+
+    .hero { margin-bottom: 72px; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 16px; }
+    .hero p { font-size: 15px; color: var(--text2); max-width: 600px; }
+
+    section { margin-bottom: 80px; scroll-margin-top: 64px; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num { font-size: 11px; font-weight: 600; letter-spacing: .1em; color: var(--accent); text-transform: uppercase; }
+    .section-header h2 { font-size: 20px; font-weight: 700; color: var(--text); }
+
+    h3 { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text2); margin-bottom: 16px; margin-top: 40px; }
+    h3:first-child { margin-top: 0; }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--border); margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      background: var(--surface2);
+      color: var(--text2);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border2);
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface); }
+    td { padding: 12px 14px; color: var(--text); vertical-align: top; }
+    td.dim { color: var(--text2); font-size: 12px; }
+    td strong { color: var(--text); font-weight: 600; }
+    td a { color: var(--accent); text-decoration: none; }
+    td a:hover { text-decoration: underline; }
+
+    /* Group label rows */
+    tr.group-row td {
+      background: var(--surface2);
+      color: var(--text3);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Score cells */
+    .score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .s5 { background: rgba(75,184,118,.18); color: var(--green); }
+    .s4 { background: rgba(75,184,118,.10); color: #8dd4a8; }
+    .s3 { background: rgba(232,184,75,.12); color: var(--yellow); }
+    .s2 { background: rgba(224,88,88,.10); color: #d08888; }
+    .s1 { background: rgba(224,88,88,.16); color: var(--red); }
+    .sn { background: var(--surface2); color: var(--text3); font-size: 11px; }
+
+    td.total { font-weight: 700; color: var(--text); }
+    td.total-hi { font-weight: 700; color: var(--green); }
+
+    /* ── CARDS ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px;
+    }
+    .card-num { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+    .card h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .card p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+    .card .source { font-size: 11px; color: var(--text3); margin-top: 12px; }
+    .card .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .tag-low { background: rgba(75,184,118,.12); color: var(--green); }
+    .tag-med { background: rgba(232,184,75,.12); color: var(--yellow); }
+    .tag-no { background: rgba(224,88,88,.12); color: var(--red); }
+
+    /* ── PATTERNS ── */
+    .pattern-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .pattern-box h4 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .pattern-box p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+    /* ── HYPOTHESES ── */
+    .hypothesis {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+    }
+    .hypo-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+    .hypo-body { font-size: 13px; line-height: 1.7; color: var(--text2); }
+    .hypo-body .if   { color: var(--blue); font-weight: 500; }
+    .hypo-body .then { color: var(--green); font-weight: 500; }
+    .hypo-body .because { color: var(--yellow); font-weight: 500; }
+    .hypo-source { font-size: 11px; color: var(--text3); margin-top: 10px; }
+
+    /* ── GAPS ── */
+    .gap-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .gap-item:last-child { border-bottom: none; }
+    .gap-id { font-size: 11px; font-weight: 700; color: var(--text3); min-width: 28px; }
+    .gap-text { font-size: 13px; color: var(--text2); }
+    .gap-text .unknown { color: var(--yellow); font-weight: 500; }
+
+    /* ── PATTERNS 3 + DIFFS ── */
+    .insight-list { display: flex; flex-direction: column; gap: 16px; }
+    .insight-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+    .insight-item .i-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+    .insight-item h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .insight-item p { font-size: 13px; color: var(--text2); line-height: 1.55; }
+    .insight-item .i-source { font-size: 11px; color: var(--text3); margin-top: 8px; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-left: 4px;
+      background: rgba(232,184,75,.15);
+      color: var(--yellow);
+      letter-spacing: .04em;
+    }
+
+    /* ── PRINCIPLE ── */
+    .principle {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 20px 24px;
+      margin-top: 24px;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+    .principle strong { color: var(--text); font-style: normal; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 32px;
+      font-size: 12px;
+      color: var(--text3);
+      display: flex;
+      gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; gap: 20px; }
+      nav a.hide { display: none; }
+      .page { padding: 40px 16px 64px; }
+      .hero h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="#">Prytulok</a>
+  <a href="#competitors">Конкуренти</a>
+  <a href="#benchmark" class="hide">Бенчмарк</a>
+  <a href="#patterns" class="hide">Патерни</a>
+  <a href="#conclusions">Висновки</a>
+  <span class="nav-date">Червень 2025</span>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">Prytulok · Research Summary</div>
+    <h1>Конкуренти, бенчмарк,<br>патерни і висновки</h1>
+    <p>Зведений документ. <span style="color:var(--yellow);">[?]</span> = факт не підтверджено джерелом — не вигадано. Джерела: competitive-analysis.md, trust-profile-analysis.md, аналіз сайтів.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <section id="competitors">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Конкуренти</h2>
+    </div>
+
+    <h3>Матриця за осями</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Продукт</th>
+            <th>Аудиторія</th>
+            <th>Основа продукту</th>
+            <th>Ключовий механізм</th>
+            <th>Довіра</th>
+            <th>Монетизація</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="6">ХАРД — той самий продукт, Україна</td></tr>
+          <tr>
+            <td><strong>Happy Paw</strong><br><span class="dim">happypaw.ua</span></td>
+            <td class="dim">18–45, UA, усиновлювачі + донори</td>
+            <td class="dim">Агрегатор 17 800 тварин від 400+ орг.</td>
+            <td>Каталог з 10+ фільтрами → <strong style="color:var(--red)">дзвінок за телефоном</strong> (поза платформою)</td>
+            <td class="dim">З 2012 р., Purina, публічна бухгалтерія</td>
+            <td class="dim">Донати (разові + щомісячні)</td>
+          </tr>
+          <tr>
+            <td><strong>UAnimals</strong><br><span class="dim">uanimals.org</span></td>
+            <td class="dim">22–40, UA + 38 країн, активісти</td>
+            <td class="dim">Правозахисна орг., НЕ adoption-продукт</td>
+            <td>Кампанії з прогрес-барами + дедлайнами — FOMO-донат</td>
+            <td class="dim">«715 000 тварин», CAF America аудит</td>
+            <td class="dim">Місячний клуб, мерч</td>
+          </tr>
+          <tr>
+            <td><strong>Sirius</strong><br><span class="dim">dogcat.com.ua</span></td>
+            <td class="dim">Київ+, усиновлювачі + донори</td>
+            <td class="dim">Один притулок, 3 100+ тварин</td>
+            <td>Пошук → форма → <strong style="color:var(--green)">обов'язковий фото-звіт</strong> після усиновлення</td>
+            <td class="dim">«10 000+ усиновлень» за 26 р.</td>
+            <td class="dim">Разові + підписки</td>
+          </tr>
+          <tr>
+            <td><strong>OLX Тварини</strong><br><span class="dim">olx.ua</span></td>
+            <td class="dim">18–55, UA, широка аудиторія</td>
+            <td class="dim">Загальний класифайд, UGC</td>
+            <td>Фільтри → лістинги → контакт продавця напряму</td>
+            <td class="dim">Рейтинги продавців, бренд №1 в UA</td>
+            <td class="dim">Платне просування</td>
+          </tr>
+
+          <tr class="group-row"><td colspan="6">СОФТ — інший продукт, той самий JTBD «знайти, з ким жити»</td></tr>
+          <tr>
+            <td><strong>Petfinder</strong><br><span class="dim">petfinder.com</span></td>
+            <td class="dim">Пн. Америка, 2M+ MAU</td>
+            <td class="dim">Агрегатор 14 500 орг.</td>
+            <td>Мультифільтр + saved search + email-алерти + «Sponsor this pet»</td>
+            <td class="dim">600 000 усиновлень/рік</td>
+            <td class="dim">B2B підписки $25–100/міс. <span class="badge">[?]</span></td>
+          </tr>
+          <tr>
+            <td><strong>Adopt-a-Pet</strong><br><span class="dim">adoptapet.com</span></td>
+            <td class="dim">Пн. Америка, 15 000+ орг.</td>
+            <td class="dim">Агрегатор + P2P «Rehome»</td>
+            <td>Форма з підказками; власник → усиновлювач без притулку</td>
+            <td class="dim">Некомерційний статус</td>
+            <td class="dim">Платне просування</td>
+          </tr>
+          <tr>
+            <td><strong>RSPCA</strong><br><span class="dim">rspca.org.uk</span></td>
+            <td class="dim">Англія і Уельс</td>
+            <td class="dim">Мережа center'ів</td>
+            <td>Прогресивне розкриття → профіль → форма → <strong style="color:var(--green)">SLA 48 год.</strong></td>
+            <td class="dim">№благодійності, «70 тварин/день»</td>
+            <td class="dim">Донати, adoption fees</td>
+          </tr>
+
+          <tr class="group-row"><td colspan="6">АСПІРАЦІЙНІ — soft-конкуренти, той самий UX-виклик</td></tr>
+          <tr>
+            <td><strong>Airbnb</strong><br><span class="dim">airbnb.com</span></td>
+            <td class="dim">25–40, досвід-орієнтовані</td>
+            <td class="dim">Trust-first P2P</td>
+            <td>Category tabs → картка → взаємні рейтинги</td>
+            <td class="dim">Верифікація, Superhost, взаємні відгуки</td>
+            <td class="dim">~3% хост + ~14% гість</td>
+          </tr>
+          <tr>
+            <td><strong>Tinder</strong><br><span class="dim">tinder.com</span></td>
+            <td class="dim">18–35, одинаки</td>
+            <td class="dim">Алгоритмічний матчинг</td>
+            <td>Swipe: <strong>один профіль за раз</strong>, бінарне рішення</td>
+            <td class="dim">55 млрд. матчів</td>
+            <td class="dim">Freemium: Gold/Platinum</td>
+          </tr>
+          <tr>
+            <td><strong>Booking.com</strong></td>
+            <td class="dim">25–55, мандрівники</td>
+            <td class="dim">28 млн. listings</td>
+            <td>4 тригери: дефіцит + соц. доказ + активність + терміновість</td>
+            <td class="dim">Verified reviews, оцінки</td>
+            <td class="dim">Комісія ~15%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:40px;">3 спільні патерни ринку</h3>
+    <div class="insight-list">
+      <div class="insight-item">
+        <div class="i-label">П1</div>
+        <h4>Фото — перший і головний фільтр</h4>
+        <p>Всі платформи від Tinder до RSPCA ведуть з зображенням. Рішення «хочу подивитись ближче» приймається на фото, а не на тексті. Українські сайти порушують це через низьку якість або відсутність фото.</p>
+        <div class="i-source">Джерело: competitive-analysis.md</div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">П2</div>
+        <h4>Воронка обривається в найгіршому місці</h4>
+        <p>Happy Paw і Sirius — фінальний крок «зателефонуй». OLX — «напиши продавцю». Платформа відпускає користувача в момент найвищої мотивації. Aspirational-конкуренти тримають весь флоу in-product.</p>
+        <div class="i-source">Джерело: competitive-analysis.md</div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">П3</div>
+        <h4>Impact-цифри = довіра, але лише якщо їх видно</h4>
+        <p>«600 000 усиновлень/рік» (Petfinder), «70 тварин/день» (RSPCA), «10 000 за 26 р.» (Sirius) — є у всіх. Але UA-сайти ховають у глибину, міжнародні — виносять у hero-блок.</p>
+        <div class="i-source">Джерело: competitive-analysis.md</div>
+      </div>
+    </div>
+
+    <h3>3 ключові відмінності</h3>
+    <div class="insight-list">
+      <div class="insight-item">
+        <div class="i-label">В1</div>
+        <h4>Aspirational-платформи фінансуються B2B, а не донатами</h4>
+        <p>Petfinder бере з притулків за analytics і priority placement — це дозволяє безкоштовний якісний UX для усиновлювачів. UA-сайти — донатна модель, тому product investment обмежений структурно.</p>
+        <div class="i-source">Джерело: competitive-analysis.md · точні суми тарифів <span class="badge">[?]</span></div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">В2</div>
+        <h4>Post-application experience broken скрізь, крім RSPCA</h4>
+        <p>Adopt-a-Pet reviews містять скарги на відсутність відповіді після заявки. RSPCA — єдиний з явним SLA 48 год. Тиша після форми — найбільш руйнівний момент для довіри.</p>
+        <div class="i-source">Джерело: competitive-analysis.md · відгуки Trustpilot <span class="badge">[?]</span></div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">В3</div>
+        <h4>Soft-конкуренти вирішили UX-задачі, яких shelter-сайти не помітили</h4>
+        <p>Tinder — одна картка усуває paralysis of choice. Airbnb — lifestyle-tabs замість сухих фільтрів. Work.ua — email-алерти на нові збіги. Жоден із цих патернів не перейшов у категорію притулків.</p>
+        <div class="i-source">Джерело: competitive-analysis.md</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <section id="benchmark">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Бенчмарк довіри до профілю</h2>
+    </div>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:24px;">Вимір: довіра до профілю тварини <strong>до першого фізичного контакту</strong>. Шкала 1–5.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:200px;">Критерій</th>
+            <th style="text-align:center;">Petfinder</th>
+            <th style="text-align:center;">Adopt-a-Pet</th>
+            <th style="text-align:center;">Airbnb</th>
+            <th style="text-align:center;">RSPCA</th>
+            <th style="text-align:center;">Sirius</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>К1</strong> Фотопокриття</td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s5">5</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+          </tr>
+          <tr>
+            <td><strong>К2</strong> Поведінковий портрет</td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s5">5</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+          </tr>
+          <tr>
+            <td><strong>К3</strong> Сигнали сумісності</td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+          </tr>
+          <tr>
+            <td><strong>К4</strong> Медична прозорість</td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score sn">—</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+          </tr>
+          <tr>
+            <td><strong>К5</strong> Соціальний доказ</td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s5">5</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+          </tr>
+          <tr>
+            <td><strong>К6</strong> Актуальність профілю</td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+          </tr>
+          <tr>
+            <td><strong>К7</strong> Відеоконтент <span style="color:var(--yellow); font-size:11px;">↑ сліпа зона</span></td>
+            <td style="text-align:center;"><span class="score s1">1</span></td>
+            <td style="text-align:center;"><span class="score s1">1</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+          </tr>
+          <tr>
+            <td><strong>К8</strong> Авторитетність джерела</td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s2">2</span></td>
+            <td style="text-align:center;"><span class="score s5">5</span></td>
+            <td style="text-align:center;"><span class="score s4">4</span></td>
+            <td style="text-align:center;"><span class="score s3">3</span></td>
+          </tr>
+          <tr style="border-top: 2px solid var(--border2);">
+            <td><strong>Сума</strong></td>
+            <td style="text-align:center;" class="total">17</td>
+            <td style="text-align:center;" class="total">18</td>
+            <td style="text-align:center;" class="total-hi">29</td>
+            <td style="text-align:center;" class="total-hi">24</td>
+            <td style="text-align:center;" class="total">20</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px; color:var(--text3); margin-bottom:32px;">Airbnb К4 = прозорість стану об'єкта (не медицина). Джерело: trust-profile-analysis.md</p>
+
+    <h3>Топ-3 механізми для MVP</h3>
+    <div class="cards">
+      <div class="card">
+        <div class="card-num">М1</div>
+        <span class="tag tag-low">Складність: низька</span>
+        <h4>Compatibility matrix</h4>
+        <p>Явні мітки на картці: «добре з дітьми ✓ / кішками ✗ / квартира ✓ / активність: середня». Іконки + мітки, не текст. Усиновлювач бачить fit до читання опису.</p>
+        <p style="margin-top:10px; color:var(--text3); font-size:12px;">Чому для нас: аудиторія 22–40 — переважно міські жителі у квартирах.</p>
+        <div class="source">Джерело: Petfinder, Adopt-a-Pet — trust-profile-analysis.md К3</div>
+      </div>
+      <div class="card">
+        <div class="card-num">М2</div>
+        <span class="tag tag-low">Складність: низька</span>
+        <h4>Post-adoption photo updates</h4>
+        <p>Після усиновлення адмін просить фото через місяць. «Знайшов дім — ось як живе» з'являється на профілі. Найсильніший соціальний доказ у категорії.</p>
+        <p style="margin-top:10px; color:var(--text3); font-size:12px;">Агрегатори так не роблять — конкурентна перевага одного притулку.</p>
+        <div class="source">Джерело: Sirius — competitive-analysis.md, К5=4</div>
+      </div>
+      <div class="card">
+        <div class="card-num">М3</div>
+        <span class="tag tag-low">Складність: мінімальна</span>
+        <h4>Named caretaker + individual narrative</h4>
+        <p>«Волонтер Оля знає Манго 3 тижні. Він потрапив до нас після...» — одне речення про автора + одне про бекграунд. Підвищує К2 і К8 одночасно.</p>
+        <div class="source">Джерело: RSPCA — К2=5/5, К8=4/5 — trust-profile-analysis.md</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:40px;">Що НЕ спрацює</h3>
+    <div class="card" style="border-left: 3px solid var(--red);">
+      <span class="tag tag-no">Не переносити</span>
+      <h4>Взаємні рейтинги (Airbnb)</h4>
+      <p>Зірки на профілі тварини — морально неприйнятно: жива істота не є об'єктом рейтингування. Крім того, асиметрія (тварина не «обирає» усиновлювача у відповідь) робить механізм беззмістовним. Airbnb-довіра тримається на взаємності — без неї рейтинг не працює.</p>
+      <div class="source">Джерело: trust-profile-analysis.md</div>
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <section id="patterns">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Патерни</h2>
+    </div>
+
+    <div class="pattern-box">
+      <h4>Обраний патерн: Photo-first grid → Progressive disclosure</h4>
+      <p>Каталог — сітка карток де фото домінує. На картці: ім'я, вид, вік, compatibility-мітки, статус. Клік — окрема сторінка профілю з галереєю, нарацією, медичними даними і формою заявки. Без модальних вікон, без pop-up форм.</p>
+    </div>
+
+    <h3>Чому саме він, а не альтернативи</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Альтернатива</th>
+            <th>Причина відхилення</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tinder-swipe</strong><br><span class="dim">Один профіль за раз</span></td>
+            <td>Незручно на десктопі (primary platform). У воєнному контексті «свайпати тварин» може відчуватись недоречно. <span class="badge">[?]</span> user research не проводився</td>
+          </tr>
+          <tr>
+            <td><strong>Modal overlay</strong><br><span class="dim">Поверх каталогу</span></td>
+            <td>Губить URL профілю — неможливо поділитись посиланням у Telegram/FB-групах, що є основним каналом поширення <span class="badge">[?]</span></td>
+          </tr>
+          <tr>
+            <td><strong>Infinite scroll</strong><br><span class="dim">Без пагінації</span></td>
+            <td>Складно повернутись до попередньої позиції після відкриття профілю. <span class="badge">[?]</span> не перевірено на UA-аудиторії</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:32px;">Що підтверджує вибір</h3>
+    <div class="insight-list">
+      <div class="insight-item">
+        <div class="i-label">Підтвердження</div>
+        <p>RSPCA використовує progressive disclosure: type → filters → grid → profile → form. Score 24/40 у бенчмарку довіри.</p>
+        <div class="i-source">trust-profile-analysis.md</div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">Підтвердження</div>
+        <p>Airbnb: grid → full listing page — найвищий score довіри (29/40) у бенчмарку. Єдиний, хто тримає весь flow in-product до офлайн-дії.</p>
+        <div class="i-source">trust-profile-analysis.md</div>
+      </div>
+      <div class="insight-item">
+        <div class="i-label">Гіпотеза <span class="badge">[?]</span></div>
+        <p>URL-sharing критично для UA: волонтери поширюють картки тварин у Telegram і Facebook-групах. Дані про канали поширення не зібрано.</p>
+      </div>
+    </div>
+
+    <div class="principle">
+      <strong>Ключовий принцип:</strong> картка в сітці — достатньо інформативна, щоб відсіяти «не моє». Але достатньо неповна, щоб спровокувати клік на «можливо моє».
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────────────────── -->
+  <section id="conclusions">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Висновки</h2>
+    </div>
+
+    <h3>Gaps — що не знаємо</h3>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding: 8px 20px; margin-bottom:32px;">
+      <div class="gap-item">
+        <div class="gap-id">G1</div>
+        <div class="gap-text">Реальний CR від перегляду Happy Paw → дзвінок у притулок — <span class="unknown">[?]</span></div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-id">G2</div>
+        <div class="gap-text">Де UA-аудиторія 22–40 шукає тварин сьогодні: OLX, Telegram, сайт? — <span class="unknown">[?]</span></div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-id">G3</div>
+        <div class="gap-text">Скільки заявок на тиждень отримує типовий UA-притулок і скільки закриваються усиновленням — <span class="unknown">[?]</span></div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-id">G4</div>
+        <div class="gap-text">Чи є попит на «фостер» (тимчасова передержка) в UA — <span class="unknown">[?]</span></div>
+      </div>
+      <div class="gap-item">
+        <div class="gap-id">G5</div>
+        <div class="gap-text">Як волонтер додає тварину сьогодні: Excel, Google Sheets, вручну? Admin UX не досліджено — <span class="unknown">[?]</span></div>
+      </div>
+    </div>
+
+    <h3>Гіпотези</h3>
+    <div class="hypothesis">
+      <div class="hypo-label">Г1 · Adoption funnel</div>
+      <div class="hypo-body">
+        <span class="if">Якщо</span> додати форму заявки in-product (без «дзвони за телефоном»),<br>
+        <span class="then">то</span> конверсія від перегляду до заявки зросте,<br>
+        <span class="because">бо</span> Happy Paw і Sirius обривають воронку в момент найвищої мотивації.
+      </div>
+      <div class="hypo-source">Джерело: competitive-analysis.md — патерн П2</div>
+    </div>
+    <div class="hypothesis">
+      <div class="hypo-label">Г2 · Compatibility</div>
+      <div class="hypo-body">
+        <span class="if">Якщо</span> зробити compatibility-мітки видимими на картці в сітці (не лише на сторінці профілю),<br>
+        <span class="then">то</span> користувачі швидше знаходять «свою» тварину і рідше залишають каталог без дії,<br>
+        <span class="because">бо</span> Petfinder і Adopt-a-Pet — єдині з явними good-with полями, і обидва у топі бенчмарку за К3.
+      </div>
+      <div class="hypo-source">Джерело: trust-profile-analysis.md — К3 = 4/5</div>
+    </div>
+    <div class="hypothesis">
+      <div class="hypo-label">Г3 · Author credibility</div>
+      <div class="hypo-body">
+        <span class="if">Якщо</span> волонтер підписує профіль тварини своїм ім'ям і додає «я з нею вже X тижнів»,<br>
+        <span class="then">то</span> довіра до поведінкового опису зростає,<br>
+        <span class="because">бо</span> RSPCA — єдиний з 5/5 по behavioral portrait, і це прямо пов'язано з named caretaker.
+      </div>
+      <div class="hypo-source">Джерело: trust-profile-analysis.md — К2=5, К8=4</div>
+    </div>
+    <div class="hypothesis">
+      <div class="hypo-label">Г4 · Social proof</div>
+      <div class="hypo-body">
+        <span class="if">Якщо</span> після усиновлення публікувати фото «як живе зараз» на профілі тварини,<br>
+        <span class="then">то</span> це стає найсильнішим соціальним доказом на сайті,<br>
+        <span class="because">бо</span> Sirius — єдиний з цим механізмом, К5=4 при тому що всі інші shelter-сайти мають К5=2.
+      </div>
+      <div class="hypo-source">Джерело: trust-profile-analysis.md — К5</div>
+    </div>
+    <div class="hypothesis">
+      <div class="hypo-label">Г5 · Viral sharing <span class="badge">[?]</span></div>
+      <div class="hypo-body">
+        <span class="if">Якщо</span> URL профілю кожної тварини окремий і шерейблий,<br>
+        <span class="then">то</span> волонтери поширюватимуть картки у Telegram/Facebook і це стане органічним каналом трафіку,<br>
+        <span class="because">бо</span> поширення конкретних тварин у соцмережах — основний механізм adoption discovery в UA.
+      </div>
+      <div class="hypo-source">Гіпотеза без даних — потребує перевірки</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>Prytulok · Research Summary</span>
+  <span>Червень 2025</span>
+  <span style="margin-left:auto;"><span style="color:var(--yellow);">[?]</span> = факт не підтверджено, не вигадано</span>
+</footer>
+
+</body>
+</html>
