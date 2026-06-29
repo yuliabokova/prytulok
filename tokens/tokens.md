@@ -19,11 +19,11 @@
 
 ### Status badges
 
-| Token | Value |
-|---|---|
-| `status-available` | terracotta |
-| `status-pending` | amber |
-| `status-adopted` | green-soft |
+| Token | Value | Hex |
+|---|---|---|
+| `status-available` | `color-terracotta` | `#C4622D` |
+| `status-pending` | `color-amber` | `#D4820A` |
+| `status-adopted` | `color-green-soft` | `#5A8A6A` |
 
 ---
 
