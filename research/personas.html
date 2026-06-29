@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prytulok — Personas & JTBD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0D0D0D;
+      --surface:  #161616;
+      --surface2: #1E1E1E;
+      --border:   #272727;
+      --border2:  #323232;
+      --text:     #EDEBE8;
+      --text2:    #888480;
+      --text3:    #555250;
+      --accent:   #E8643A;
+      --accent2:  #C44E26;
+      --green:    #4BB876;
+      --yellow:   #E8B84B;
+      --red:      #E05858;
+      --blue:     #5B9BD5;
+      --r:        8px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 14px; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px; display: flex; align-items: center; gap: 32px; height: 48px;
+    }
+    .nav-brand { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-decoration: none; }
+    nav a { font-size: 13px; color: var(--text2); text-decoration: none; transition: color .15s; }
+    nav a:hover { color: var(--text); }
+    .nav-date { margin-left: auto; font-size: 12px; color: var(--text3); }
+
+    /* LAYOUT */
+    .page { max-width: 1120px; margin: 0 auto; padding: 64px 32px 96px; }
+
+    .hero { margin-bottom: 72px; }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .hero h1 { font-size: 36px; font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 16px; }
+    .hero p { font-size: 15px; color: var(--text2); max-width: 640px; line-height: 1.6; }
+
+    section { margin-bottom: 80px; scroll-margin-top: 64px; }
+    .section-header {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    }
+    .section-num { font-size: 11px; font-weight: 600; letter-spacing: .1em; color: var(--accent); text-transform: uppercase; }
+    .section-header h2 { font-size: 20px; font-weight: 700; color: var(--text); }
+
+    h3 { font-size: 12px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; margin-top: 40px; }
+    h3:first-child { margin-top: 0; }
+
+    /* TABLES */
+    .table-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--border); margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      background: var(--surface2); color: var(--text2);
+      font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+      padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface); }
+    td { padding: 11px 14px; color: var(--text); vertical-align: top; line-height: 1.5; }
+    td.dim { color: var(--text2); font-size: 12px; }
+    td strong { color: var(--text); font-weight: 600; }
+    tr.section-row td {
+      background: var(--surface2); color: var(--text3);
+      font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      padding: 5px 14px; border-bottom: 1px solid var(--border);
+    }
+
+    /* IMPORTANCE SCORES */
+    .imp {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 5px;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .imp-3 { background: rgba(232,100,58,.20); color: var(--accent); }
+    .imp-2 { background: rgba(232,184,75,.13); color: var(--yellow); }
+    .imp-1 { background: rgba(85,82,80,.25); color: var(--text2); }
+    .imp-x { background: transparent; color: var(--text3); font-size: 12px; }
+    .imp-q { background: rgba(232,184,75,.10); color: var(--yellow); font-size: 11px; }
+
+    /* COMPETITOR STATUS */
+    .ok   { color: var(--green); font-weight: 600; }
+    .part { color: var(--yellow); }
+    .no   { color: var(--red); }
+
+    /* BADGES */
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 3px; vertical-align: middle;
+      letter-spacing: .04em; white-space: nowrap;
+    }
+    .badge-primary { background: rgba(232,100,58,.20); color: var(--accent); border: 1px solid rgba(232,100,58,.35); }
+    .badge-secondary { background: var(--surface2); color: var(--text3); border: 1px solid var(--border2); }
+    .badge-hypo { background: rgba(232,184,75,.12); color: var(--yellow); border: 1px solid rgba(232,184,75,.25); }
+    .badge-conf { background: rgba(75,184,118,.12); color: var(--green); border: 1px solid rgba(75,184,118,.25); }
+    .badge-q { background: rgba(232,184,75,.10); color: var(--yellow); }
+
+    /* PERSONA CARDS */
+    .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .persona-primary { grid-column: 1 / -1; }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 24px;
+    }
+    .persona-card.primary {
+      border-color: rgba(232,100,58,.35);
+      background: linear-gradient(135deg, #1a120e 0%, var(--surface) 60%);
+    }
+
+    .persona-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .persona-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .persona-ctx { font-size: 12px; color: var(--text2); }
+
+    .persona-block { margin-bottom: 16px; }
+    .persona-block-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 8px;
+    }
+    .persona-block ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .persona-block li { font-size: 13px; color: var(--text2); padding-left: 14px; position: relative; line-height: 1.5; }
+    .persona-block li::before { content: '—'; position: absolute; left: 0; color: var(--text3); }
+    .persona-block li.ok::before { content: '✓'; color: var(--green); }
+    .persona-block li.no::before { content: '✗'; color: var(--red); }
+    .persona-block li .src { font-size: 11px; color: var(--text3); }
+
+    .persona-quote {
+      background: var(--surface2);
+      border-left: 2px solid var(--border2);
+      border-radius: 0 4px 4px 0;
+      padding: 12px 16px;
+      margin-top: 16px;
+    }
+    .persona-quote blockquote { font-size: 13px; font-style: italic; color: var(--text2); line-height: 1.6; margin-bottom: 6px; }
+    .persona-quote .q-note { font-size: 11px; color: var(--text3); }
+
+    /* JOBS */
+    .job-main {
+      background: var(--surface);
+      border: 1px solid rgba(232,100,58,.35);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--r);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .job-main .job-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .job-main .job-formula { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 14px; }
+
+    .jobs-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .job-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+    .job-item.hypo {
+      border-color: rgba(232,184,75,.20);
+      background: rgba(232,184,75,.03);
+    }
+    .job-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .job-id { font-size: 11px; font-weight: 700; color: var(--text3); min-width: 24px; padding-top: 1px; }
+    .job-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .job-formula { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
+    .job-formula .when { color: var(--text); }
+    .job-formula .want { color: var(--blue); }
+    .job-formula .so { color: var(--green); }
+    .job-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .job-src { font-size: 11px; color: var(--text3); }
+
+    /* MATRIX IMP CELL */
+    .cell-imp { display: flex; flex-direction: column; gap: 4px; }
+    .cell-reason { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+    /* CONCLUSIONS */
+    .core-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .core-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: var(--r);
+      padding: 18px 20px;
+    }
+    .core-item .c-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .core-item .c-num { font-size: 12px; font-weight: 700; color: var(--green); }
+    .core-item .c-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .core-item p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+    .core-item .c-warn { font-size: 12px; color: var(--text3); margin-top: 8px; font-style: italic; }
+
+    .eject-table td:first-child { font-weight: 500; }
+
+    /* SOURCE NOTE */
+    .source-note { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+    /* CHANGED TABLE */
+    .changed-row td:first-child { color: var(--text); font-weight: 500; }
+
+    @media (max-width: 720px) {
+      .persona-grid { grid-template-columns: 1fr; }
+      .persona-primary { grid-column: auto; }
+      nav { gap: 16px; padding: 0 16px; }
+      .page { padding: 40px 16px 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">Prytulok</a>
+  <a href="#personas">Персони</a>
+  <a href="#jobs">Jobs</a>
+  <a href="#matrix">Матриця</a>
+  <a href="#conclusions">Висновки</a>
+  <a href="./research.html">← Research</a>
+  <span class="nav-date">Червень 2025</span>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">Prytulok · UX Research</div>
+    <h1>Персони та Jobs to Be Done</h1>
+    <p>Хто шукає тварину, що ними рухає і де зупиняються. Ієрархія jobs від основного до гіпотетичних. JTBD-матриця з оцінками по персонах і конкурентах.</p>
+    <p style="margin-top:10px;font-size:13px;">
+      <span class="badge badge-conf">підтверджено</span> = підтверджено research.md або product interview &nbsp;
+      <span class="badge badge-hypo">[?] гіпотеза</span> = plausible, не перевірено &nbsp;
+      <span class="badge badge-secondary">голос персони</span> = цитата-настрій, не реальний відгук
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════ PERSONAS ═══════════════════════════════ -->
+  <section id="personas">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Персони</h2>
+    </div>
+
+    <div class="persona-grid">
+
+      <!-- PRIMARY -->
+      <div class="persona-primary">
+        <div class="persona-card primary">
+          <div class="persona-head">
+            <div>
+              <div class="persona-name">Маша &nbsp;<span class="badge badge-primary">PRIMARY</span></div>
+              <div class="persona-ctx">«Думаю взяти кота» · 1-ша тварина, ще не певна</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:16px;">
+            <div class="persona-block">
+              <div class="persona-block-label">Контекст</div>
+              <ul>
+                <li>Давно хотіла, але відкладала — страх відповідальності</li>
+                <li>Побачила пост у Instagram, клікнула → перший візит</li>
+                <li>Може повернутись через кілька днів</li>
+                <li>Усі 5 блокерів присутні <span class="src">· Б1–Б5, product interview</span></li>
+              </ul>
+            </div>
+            <div class="persona-block">
+              <div class="persona-block-label">Jobs</div>
+              <ul>
+                <li>Зрозуміти чи підходить ця тварина її ситуації</li>
+                <li>Дізнатись що буде після «натисну кнопку»</li>
+                <li>Отримати дозвіл на рішення від авторитету</li>
+              </ul>
+            </div>
+            <div class="persona-block">
+              <div class="persona-block-label">Болі</div>
+              <ul>
+                <li>Фото одне, незрозуміле <span class="src">· К1=3</span></li>
+                <li>Характер — шаблонний текст <span class="src">· К2=2–3 UA</span></li>
+                <li>Немає даних про сумісність <span class="src">· Б3</span></li>
+                <li>«Подзвони» = 4 шари тривоги <span class="src">· Б4, розд.6</span></li>
+                <li>Тиша після форми <span class="src">· Б5</span></li>
+              </ul>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+            <div class="persona-block">
+              <div class="persona-block-label">Тригери довіри</div>
+              <ul>
+                <li class="ok">Фото в русі, природній обстановці</li>
+                <li class="ok">«Волонтер Оля знає Мурку 3 тижні» <span class="src">· К2=5 RSPCA</span></li>
+                <li class="ok">Мітка «підходить для квартири ✓» <span class="src">· К3</span></li>
+                <li class="ok">Що чекати далі — до відправки форми <span class="src">· Б5, розд.6.4</span></li>
+                <li class="ok">CTA «Хочу взяти» а не «Подати заявку» <span class="src">· розд.6.4</span></li>
+                <li class="no">Безособова картка без підпису</li>
+                <li class="no">Дзвінок як єдиний варіант <span class="src">· Б4</span></li>
+              </ul>
+            </div>
+            <div>
+              <div class="persona-block-label" style="margin-bottom:8px;">Чому primary</div>
+              <p style="font-size:13px;color:var(--text2);line-height:1.6;">Найбільша зона тертя: прийшла із слабкою мотивацією, має всі 5 блокерів, якщо сайт не переконає тут — не повернеться. Дизайн для неї автоматично покриває П2 і П3. Зворотне не виконується.</p>
+              <div class="persona-quote" style="margin-top:12px;">
+                <blockquote>«Я так і не зателефонувала. Думала зроблю це завтра, а потім якось забулась.»</blockquote>
+                <div class="q-note"><span class="badge badge-secondary">голос персони</span> механізм підтверджено Б4 + розд.6, UA-відгук не зібрано</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- П2 -->
+      <div class="persona-card">
+        <div class="persona-head">
+          <div>
+            <div class="persona-name">Олег і Катя &nbsp;<span class="badge badge-secondary">SECONDARY</span></div>
+            <div class="persona-ctx">«Шукаємо собаку для дочки» · 1-ша тварина, вже вирішили</div>
+          </div>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Контекст</div>
+          <ul>
+            <li>Місяць обговорювали — вже готові <span class="src badge badge-q">[?] деталь</span></li>
+            <li>Критерії чіткі: невеликий, з дітьми, квартира</li>
+            <li>Знайшли через репост у Facebook <span class="src">· product interview</span></li>
+          </ul>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Jobs</div>
+          <ul>
+            <li>Швидко відфільтрувати по критеріях</li>
+            <li>Впевнитись що безпечно для дитини</li>
+            <li>Перший крок без дзвінка <span class="src">· Б4, розд.6</span></li>
+          </ul>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Болі</div>
+          <ul>
+            <li>Немає фільтру «добре з дітьми» <span class="src">· К3=3 Sirius</span></li>
+            <li>Медичні дані неповні <span class="src">· К4=3</span></li>
+            <li>«Відправили — і що?» <span class="src">· Б4, Б5</span></li>
+          </ul>
+        </div>
+        <div class="persona-quote">
+          <blockquote>«Ніде не написано просто «підходить для сім'ї з дітьми». Читаємо все і здогадуємось.»</blockquote>
+          <div class="q-note"><span class="badge badge-secondary">голос персони</span> · К3=3, Б3</div>
+        </div>
+      </div>
+
+      <!-- П3 -->
+      <div class="persona-card">
+        <div class="persona-head">
+          <div>
+            <div class="persona-name">Діана &nbsp;<span class="badge badge-secondary">SECONDARY</span></div>
+            <div class="persona-ctx">«У мене вже є кішка» · хоче ще одну <span class="badge badge-hypo">[?] частота сегменту</span></div>
+          </div>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Контекст</div>
+          <ul>
+            <li>Кішка Сима 4 роки, знає як доглядати</li>
+            <li>Страх конфлікту між тваринами — центральний блокер <span class="src">· Б3, product interview</span></li>
+          </ul>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Jobs</div>
+          <ul>
+            <li>Знайти тварину що точно уживеться з Симою</li>
+            <li>Зрозуміти характер: активна / незалежна</li>
+            <li>Впевнитись що бекграунд без агресії <span class="src badge badge-q">[?] гіпотеза</span></li>
+          </ul>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Болі</div>
+          <ul>
+            <li>«Добре з іншими тваринами» — немає або без деталей <span class="src">· К3=3, К2=2–3</span></li>
+            <li>Бекграунд тварини відсутній <span class="src">· Б1, Б2</span></li>
+          </ul>
+        </div>
+        <div class="persona-quote">
+          <blockquote>«Готова взяти — але тільки якщо впевнена що зживуться. Не хочу травмувати Симу.»</blockquote>
+          <div class="q-note"><span class="badge badge-secondary">голос персони</span> · Б1–Б3, К3</div>
+        </div>
+      </div>
+
+      <!-- П4 -->
+      <div style="grid-column: 1 / -1;">
+        <div class="persona-card">
+          <div class="persona-head">
+            <div>
+              <div class="persona-name">Ірина &nbsp;<span class="badge badge-secondary">SECONDARY</span></div>
+              <div class="persona-ctx">«Хочу допомогти, але не можу брати» · волонтер / донатор</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">
+            <div class="persona-block">
+              <div class="persona-block-label">Контекст</div>
+              <ul>
+                <li>Не може взяти — причини особисті <span class="src badge badge-q">[?] деталі</span></li>
+                <li>Бачить пости у Facebook, хоче підтримати</li>
+                <li>Шлях: «Як допомогти» → список → форма/донат <span class="src">· product interview</span></li>
+              </ul>
+            </div>
+            <div class="persona-block">
+              <div class="persona-block-label">Jobs</div>
+              <ul>
+                <li>Зрозуміти конкретно як допомогти <span class="src">· product interview</span></li>
+                <li>Залишити контакт без зайвих кроків</li>
+                <li>Відчути що внесок має ефект <span class="src badge badge-q">[?] гіпотеза</span></li>
+              </ul>
+            </div>
+            <div class="persona-block">
+              <div class="persona-block-label">Тригери довіри</div>
+              <ul>
+                <li class="ok">Конкретний список потреб: корм, ліки, перевезення</li>
+                <li class="ok">Impact-цифри: «10 000 усиновлень за 26 р.» <span class="src">· research.md П3</span></li>
+                <li class="ok">Форма з чекбоксами — що саме може <span class="src">· product interview</span></li>
+                <li class="no">Тільки реквізити без пояснення на що</li>
+              </ul>
+            </div>
+          </div>
+          <div class="persona-quote" style="margin-top:0;">
+            <blockquote>«Хотіла б допомагати регулярно, але не знаю з чого почати і чи відгукнуться.»</blockquote>
+            <div class="q-note"><span class="badge badge-secondary">голос персони</span> · розд.«Як допомогти», Б5 (тиша після дії)</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /persona-grid -->
+  </section>
+
+  <!-- ═══════════════════════════════ JOBS ═══════════════════════════════ -->
+  <section id="jobs">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Jobs to Be Done</h2>
+    </div>
+
+    <!-- MAIN -->
+    <div class="job-main">
+      <div class="job-label">Main Job продукту</div>
+      <div class="job-formula">
+        <span class="when"><strong>Коли</strong> я побачила тварину і вирішую чи вона для мене,</span><br>
+        <span class="want"><strong>я хочу</strong> отримати чітку відповідь «моя / не моя» без дзвінків і невизначеності,</span><br>
+        <span class="so"><strong>щоб</strong> зробити рішення з впевненістю — і не відкласти на потім.</span>
+      </div>
+      <div class="job-meta">
+        <span class="badge badge-primary">П1</span>
+        <span class="badge badge-secondary">П2</span>
+        <span class="badge badge-secondary">П3</span>
+        <span class="job-src">· Б1–Б5 · два режими візиту · Г1 · competitive П2</span>
+      </div>
+    </div>
+
+    <!-- RELATED -->
+    <h3>Related Jobs — кроки на шляху до main</h3>
+    <div class="jobs-list">
+
+      <div class="job-item">
+        <div class="job-head">
+          <div class="job-id">R1</div>
+          <div class="job-title">Швидке сортування</div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я переглядаю тварин і маю конкретну ситуацію,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> одразу бачити — підходить чи ні — без відкриття кожної картки,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> не витрачати час на тих, що точно не стануть моєю твариною.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 3</span>
+          <span class="badge badge-secondary">П3 · 3</span>
+          <span class="job-src">· Б3 · Petfinder/Adopt-a-Pet К3=4 · Sirius К3=3</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head">
+          <div class="job-id">R2</div>
+          <div class="job-title">Зрозуміти тварину як живу істоту</div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я відкрила конкретну тварину і хочу уявити як буде жити разом,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> почути про характер від людини яка її знає — не шаблон,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> довіряти опису і не гадати «а раптом насправді інша».</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 2</span>
+          <span class="badge badge-secondary">П3 · 3</span>
+          <span class="job-src">· Б1 Б2 · RSPCA К2=5 К8=4 · UA К2=2–3</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head">
+          <div class="job-id">R3</div>
+          <div class="job-title">Зробити перший крок без бар'єру</div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я вирішила що хочу дізнатись більше,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> зробити це одразу і сама — без дзвінка незнайомим,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> не загальмуватись саме тоді коли мотивація найвища.</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin:8px 0 10px;line-height:1.5;">
+          Бар'єр чотиришаровий: страх оцінювання · тиск реального часу · невідомість формату · тривога перед незнайомцями.<br>
+          Sirius: обов'язкове 30-хв інтерв'ю + право відмови. 65% Gen Z некомфортно телефонувати незнайомим (Uswitch n=2000).
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 3</span>
+          <span class="badge badge-secondary">П3 · 2</span>
+          <span class="job-src">· Б4 · competitive П2 · research.md розд.6 · dogcat.com.ua</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head">
+          <div class="job-id">R4</div>
+          <div class="job-title">Знати що буде після</div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я зробила перший крок і чекаю,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> знати точно — хто і коли зі мною зв'яжеться,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> не сидіти в невизначеності і не жалкувати що взагалі намагалась.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 2</span>
+          <span class="badge badge-secondary">П3 · 2</span>
+          <span class="badge badge-secondary">П4 · 2</span>
+          <span class="job-src">· Б5 · В2 · RSPCA SLA 48 год · product interview</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head">
+          <div class="job-id">R5</div>
+          <div class="job-title">Повернутись до «своєї» через кілька днів</div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я ще думаю і не готова вирішити зараз,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> легко знайти тварину яка мені сподобалась — через день, через три,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> не починати пошук з нуля.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 1</span>
+          <span class="job-src">· режим «думає» · Г5 підтверджено · product interview</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EMOTIONAL -->
+    <h3>Emotional Jobs</h3>
+    <div class="jobs-list">
+
+      <div class="job-item">
+        <div class="job-head"><div class="job-id">E1</div><div class="job-title">Дозволити собі вирішити</div></div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я хочу взяти тварину але боюсь що не впораюсь,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> побачити що інші люди як я це зробили і все добре,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> отримати «дозвіл» і перестати відкладати через страх.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 1</span>
+          <span class="badge badge-secondary">П3 · 2</span>
+          <span class="job-src">· Б1 · Sirius post-adoption К5=4 · research.md М2</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head"><div class="job-id">E2</div><div class="job-title">Довіряти тому що читаю</div></div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я читаю опис тварини,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> відчути що за словами стоїть конкретна людина — не шаблон,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> вірити а не скептично гортати далі.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 2</span>
+          <span class="badge badge-secondary">П3 · 3</span>
+          <span class="job-src">· Б2 · RSPCA К8=4 vs інші К8=2</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SOCIAL -->
+    <h3>Social Jobs</h3>
+    <div class="jobs-list">
+
+      <div class="job-item">
+        <div class="job-head"><div class="job-id">S1</div><div class="job-title">Поділитись і вирішити разом</div></div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я знайшла тварину яка може підійти,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> надіслати її партнеру або подрузі,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> прийняти рішення разом, а не наодинці.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-primary">П1 · 3</span>
+          <span class="badge badge-secondary">П2 · 3</span>
+          <span class="badge badge-secondary">П3 · 2</span>
+          <span class="job-src">· Г5 підтверджено · URL = одиниця поширення у Telegram/FB · product interview</span>
+        </div>
+      </div>
+
+      <div class="job-item">
+        <div class="job-head"><div class="job-id">S2</div><div class="job-title">Зробити щось конкретне для притулку</div></div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я хочу підтримати притулок але не можу взяти тварину,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> знайти спосіб допомогти прямо зараз,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> не просто «записатись у список», а знати що внесок має ефект.</span>
+        </div>
+        <div class="job-meta">
+          <span class="badge badge-secondary">П4 · 3</span>
+          <span class="job-src">· product interview · personas.md П4</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HYPOTHESES -->
+    <h3>Гіпотези — не в MVP без перевірки</h3>
+    <div class="jobs-list">
+
+      <div class="job-item hypo">
+        <div class="job-head">
+          <div class="job-id">H1</div>
+          <div class="job-title">Поділитись після усиновлення &nbsp;<span class="badge badge-hypo">[?]</span></div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я забрала тварину,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> поділитись фото з притулком,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> відчути що це не кінець стосунку, а частина спільноти.</span>
+        </div>
+        <div class="source-note">Натхнено Sirius post-adoption механізмом. Мотивація самого користувача ділитись — не підтверджена.</div>
+      </div>
+
+      <div class="job-item hypo">
+        <div class="job-head">
+          <div class="job-id">H2</div>
+          <div class="job-title">Порівняти двох тварин поряд &nbsp;<span class="badge badge-hypo">[?]</span></div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я не можу вибрати між двома,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> бачити їх разом,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> зробити рішення без втоми від перемикань.</span>
+        </div>
+        <div class="source-note">Немає даних про decision paralysis. База 20–60 тварин знижує ймовірність.</div>
+      </div>
+
+      <div class="job-item hypo">
+        <div class="job-head">
+          <div class="job-id">H3</div>
+          <div class="job-title">Врятувати через воєнний контекст &nbsp;<span class="badge badge-hypo">[?]</span></div>
+        </div>
+        <div class="job-formula">
+          <span class="when"><strong>Коли</strong> я бачу що тварина лишилась без хазяїна через війну,</span>&nbsp;
+          <span class="want"><strong>я хочу</strong> взяти саме її,</span>&nbsp;
+          <span class="so"><strong>щоб</strong> допомогти конкретній жертві обставин.</span>
+        </div>
+        <div class="source-note">Воєнний контекст як категорія і мітка — підтверджено. Емоційний тригер «врятувати саме цю» — гіпотеза.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ MATRIX ═══════════════════════════════ -->
+  <section id="matrix">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>JTBD-матриця</h2>
+    </div>
+
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">
+      Важливість: <span class="imp imp-3">3</span> критично &nbsp;
+      <span class="imp imp-2">2</span> важливо &nbsp;
+      <span class="imp imp-1">1</span> корисно &nbsp;
+      <span class="imp imp-x">—</span> не релевантно &nbsp;
+      <span class="imp imp-q">?</span> невідомо
+    </p>
+
+    <h3>Персони × Jobs</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:120px;">Job</th>
+            <th>П1 Маша <span class="badge badge-primary" style="vertical-align:middle;">PRIMARY</span></th>
+            <th>П2 Олег+Катя</th>
+            <th>П3 Діана</th>
+            <th>П4 Ірина</th>
+            <th style="min-width:160px;">Функція в продукті</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-row"><td colspan="6">Related Jobs</td></tr>
+          <tr>
+            <td><strong>Main</strong><br><span class="dim">відповідь «моя/не моя»</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">Б1–Б5 усі присутні, найслабша мотивація</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">відповідь in-product, не по телефону</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">«моя/не моя» = питання сумісності</div></div></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td class="dim">Повний флоу: каталог → профіль → форма → підтвердження</td>
+          </tr>
+          <tr>
+            <td><strong>R1</strong><br><span class="dim">швидке сортування</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">мітки відсіюють «не моє» без кліку · Б3</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">критерії чіткі, вручну = фрустрація</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">сумісність з існуючою = головний фільтр</div></div></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td class="dim">Compatibility-мітки іконками на картці в сітці</td>
+          </tr>
+          <tr>
+            <td><strong>R2</strong><br><span class="dim">зрозуміти тварину</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">Б2 невідомий характер · «хто це написав?»</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">безпека дитини, не центральний страх</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">рішення про сумісність = тільки опис</div></div></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td class="dim">Named caretaker + ≥3 речення від підписаного волонтера</td>
+          </tr>
+          <tr>
+            <td><strong>R3</strong><br><span class="dim">перший крок без бар'єру</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">Б4 · 4 шари тривоги · Sirius 30-хв інтерв'ю</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">тривога перед незнайомим + ризик відмови</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">досвід є, бар'єр менший</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-1">1</span><div class="cell-reason">форма волонтера — точка входу</div></div></td>
+            <td class="dim">Форма заявки без дзвінка + мікрокопія без «оцінювання»</td>
+          </tr>
+          <tr>
+            <td><strong>R4</strong><br><span class="dim">знати що буде після</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">Б5 · перший досвід · тривога max</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">хочуть зрозуміти процес</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">менша тривога, але невизначеність болить</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">«чи відгукнуться взагалі»</div></div></td>
+            <td class="dim">Сторінка підтвердження + email із дедлайном відповіді</td>
+          </tr>
+          <tr>
+            <td><strong>R5</strong><br><span class="dim">повернутись до «своєї»</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">режим «думає» · URL = єдина закладка · Г5</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-1">1</span><div class="cell-reason">«готові», повернення малоймовірне</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-q">?</span><div class="cell-reason">може порівнювати кілька — не підтверджено</div></div></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td class="dim">Унікальний постійний URL кожного профілю</td>
+          </tr>
+          <tr class="section-row"><td colspan="6">Emotional Jobs</td></tr>
+          <tr>
+            <td><strong>E1</strong><br><span class="dim">дозволити собі вирішити</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">Б1 страх відповідальності — перший блокер</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-1">1</span><div class="cell-reason">вже вирішили, страх подоланий</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">страх конфлікту між тваринами</div></div></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td class="dim">Post-adoption фото «як живе зараз» на профілі</td>
+          </tr>
+          <tr>
+            <td><strong>E2</strong><br><span class="dim">довіряти тому що читаю</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">«хто це написав?» · безособовий = скіп</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">безпека дитини вимагає довіри</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">рішення про сумісність = чужі слова</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-1">1</span><div class="cell-reason">довіра до організації загалом</div></div></td>
+            <td class="dim">Ім'я + фото волонтера на профілі тварини</td>
+          </tr>
+          <tr class="section-row"><td colspan="6">Social Jobs</td></tr>
+          <tr>
+            <td><strong>S1</strong><br><span class="dim">поділитись і вирішити разом</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">URL = одиниця поширення у Telegram/FB · Г5</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">сімейне рішення, обидва мають погодитись</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-2">2</span><div class="cell-reason">живе з партнером</div></div></td>
+            <td><div class="cell-imp"><span class="imp imp-1">1</span><div class="cell-reason">може репостити про притулок</div></div></td>
+            <td class="dim">Той самий унікальний URL (спільний з R5)</td>
+          </tr>
+          <tr>
+            <td><strong>S2</strong><br><span class="dim">конкретна допомога</span></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td><span class="imp imp-x">—</span></td>
+            <td><div class="cell-imp"><span class="imp imp-3">3</span><div class="cell-reason">основний job П4</div></div></td>
+            <td class="dim">Розділ «Як допомогти» зі списком потреб і формою</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:32px;">Конкуренти × Jobs</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Happy Paw</th>
+            <th>Sirius</th>
+            <th>RSPCA</th>
+            <th>Petfinder / Adopt-a-Pet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Main</strong></td>
+            <td><span class="no">✗</span> обривається на «подзвони»</td>
+            <td><span class="part">◐</span> форма є, але тиша після</td>
+            <td><span class="ok">✓</span> форма + SLA 48 год</td>
+            <td><span class="ok">✓</span> in-product флоу</td>
+          </tr>
+          <tr>
+            <td><strong>R1</strong></td>
+            <td><span class="no">✗</span> мітки відсутні</td>
+            <td><span class="no">✗</span> К3=3</td>
+            <td><span class="ok">✓</span> К3=4</td>
+            <td><span class="ok">✓</span> К3=4, єдині з compatibility на картці</td>
+          </tr>
+          <tr>
+            <td><strong>R2</strong></td>
+            <td><span class="no">✗</span> К2=2–3, К8=2</td>
+            <td><span class="no">✗</span> К2=3, К8=3</td>
+            <td><span class="ok">✓</span> К2=5, К8=4 — єдиний</td>
+            <td><span class="no">✗</span> К2=2–3</td>
+          </tr>
+          <tr>
+            <td><strong>R3</strong></td>
+            <td><span class="no">✗</span> тільки телефон</td>
+            <td><span class="part">◐</span> форма є, без підказок, 30-хв інтерв'ю</td>
+            <td><span class="ok">✓</span> in-product форма</td>
+            <td><span class="ok">✓</span> форма з підказками</td>
+          </tr>
+          <tr>
+            <td><strong>R4</strong></td>
+            <td><span class="no">✗</span> тиша після дії</td>
+            <td><span class="no">✗</span> тиша після форми</td>
+            <td><span class="part">◐</span> SLA публічний, але не в email</td>
+            <td><span class="no">✗</span> reviews: скарги на відсутність відповіді</td>
+          </tr>
+          <tr>
+            <td><strong>R5</strong></td>
+            <td><span class="part">◐</span> URL є, sharing не акцентовано</td>
+            <td><span class="part">◐</span> URL є</td>
+            <td><span class="part">◐</span> URL є</td>
+            <td><span class="ok">✓</span> Petfinder: saved search як альтернатива</td>
+          </tr>
+          <tr>
+            <td><strong>E1</strong></td>
+            <td><span class="no">✗</span> К5=2</td>
+            <td><span class="ok">✓</span> К5=4, єдиний з post-adoption photos</td>
+            <td><span class="no">✗</span> К5=2</td>
+            <td><span class="no">✗</span> К5=2</td>
+          </tr>
+          <tr>
+            <td><strong>E2</strong></td>
+            <td><span class="no">✗</span> К8=2</td>
+            <td><span class="no">✗</span> К8=3</td>
+            <td><span class="ok">✓</span> К8=4</td>
+            <td><span class="no">✗</span> К8=2</td>
+          </tr>
+          <tr>
+            <td><strong>S1</strong></td>
+            <td><span class="part">◐</span> URL є</td>
+            <td><span class="part">◐</span> URL є</td>
+            <td><span class="part">◐</span> URL є</td>
+            <td><span class="part">◐</span> URL є</td>
+          </tr>
+          <tr>
+            <td><strong>S2</strong></td>
+            <td><span class="part">◐</span> є базовий розділ</td>
+            <td><span class="part">◐</span> є базовий розділ</td>
+            <td><span class="part">◐</span> —</td>
+            <td><span class="part">◐</span> —</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:-16px;"><span class="ok">✓</span> закриває &nbsp; <span class="part">◐</span> частково &nbsp; <span class="no">✗</span> не закриває</p>
+  </section>
+
+  <!-- ═══════════════════════════════ CONCLUSIONS ═══════════════════════════════ -->
+  <section id="conclusions">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Висновки</h2>
+    </div>
+
+    <h3>3 Jobs у ядро MVP</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">П1=3 <strong>і</strong> не закриті жодним UA-конкурентом (Happy Paw, Sirius).</p>
+
+    <div class="core-list">
+      <div class="core-item">
+        <div class="c-head"><span class="c-num">1</span><span class="c-title">R2 — Зрозуміти тварину як живу істоту</span></div>
+        <p>П1=3, П3=3. Happy Paw ✗, Sirius ✗. Єдиний хто закриває — RSPCA (не UA). Named caretaker + поведінковий портрет.</p>
+        <div class="c-warn">Якщо не зробити → П1 читає безособовий текст → не довіряє → скіп.</div>
+      </div>
+      <div class="core-item">
+        <div class="c-head"><span class="c-num">2</span><span class="c-title">R4 — Знати що буде після</span></div>
+        <p>П1=3. Happy Paw ✗, Sirius ✗. UA-ринок повністю сліпий. Сторінка підтвердження + email із дедлайном.</p>
+        <div class="c-warn">Якщо не зробити → Б5 → тиша → руйнує довіру в найгіршому місці.</div>
+      </div>
+      <div class="core-item">
+        <div class="c-head"><span class="c-num">3</span><span class="c-title">R1 — Швидке сортування</span></div>
+        <p>П1=3, П2=3, П3=3. Happy Paw ✗, Sirius ✗. Compatibility-мітки іконками прямо на картці в сітці.</p>
+        <div class="c-warn">Якщо не зробити → П2 і П3 відкривають кожен профіль вручну → залишають каталог.</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--text3);margin-bottom:32px;">R3 (форма без дзвінка) — четвертий рівносильний кандидат: П1=3, П2=3, Happy Paw ✗. Включений у MVP як базова вимога — але Sirius частково закриває, тому конкурентна перевага менша. Механізм бар'єру підтверджено доресерчем (розд.6).</p>
+
+    <h3>Функції-кандидати на виліт</h3>
+    <div class="table-wrap">
+      <table class="eject-table">
+        <thead>
+          <tr><th>Функція</th><th>Чому може з'явитись</th><th>Чому не має job</th><th>Вердикт</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Saved search / email-алерти</td>
+            <td class="dim">Petfinder має</td>
+            <td class="dim">R5 закривається URL-закладкою; 20–60 тварин — saved search зайвий</td>
+            <td><span class="no">✗ поза MVP</span></td>
+          </tr>
+          <tr>
+            <td>Порівняння двох тварин поряд</td>
+            <td class="dim">«зручно вибирати»</td>
+            <td class="dim">Тільки H2 — гіпотеза без підтвердження</td>
+            <td><span class="no">✗ поза MVP</span></td>
+          </tr>
+          <tr>
+            <td>Рейтинги / зірки на профілі</td>
+            <td class="dim">«соціальний доказ»</td>
+            <td class="dim">Морально неприйнятно. Асиметрія: тварина не «обирає» у відповідь</td>
+            <td><span class="no">✗ назавжди</span></td>
+          </tr>
+          <tr>
+            <td>Окрема сторінка «про нас»</td>
+            <td class="dim">стандартна сторінка</td>
+            <td class="dim">E1 і S2 закриваються через named caretaker і розділ «Як допомогти»</td>
+            <td><span class="part">⚠ не в MVP</span></td>
+          </tr>
+          <tr>
+            <td>Impact-блок з цифрами як hero-секція</td>
+            <td class="dim">«будує довіру»</td>
+            <td class="dim">Слабко служить E1 для П1; сильніше для П4 (secondary). Достатньо одного рядка</td>
+            <td><span class="part">⚠ мінімальне виконання</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:32px;">Що змінилось після доресерчу (червень 2025)</h3>
+    <div class="table-wrap">
+      <table class="changed-row">
+        <thead><tr><th>Що</th><th>Було</th><th>Стало</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Природа бар'єру Б4</td>
+            <td class="dim">«Подзвони — злякалась, відклала» — без деталей</td>
+            <td class="dim">4 шари: страх оцінювання + тиск реального часу + невідомість + тривога перед незнайомцями. Sirius підтвердив: 30-хв інтерв'ю + право відмови. 65% Gen Z некомфортно телефонувати незнайомим.</td>
+          </tr>
+          <tr>
+            <td>П2 Jobs 3</td>
+            <td class="dim">«не хочу телефонувати незнайомим» — позначено «пряма цитата»</td>
+            <td class="dim">«тривога перед незнайомим, реальний час, ризик відмови» — голос персони. Сама тривога підтверджена (65% Gen Z).</td>
+          </tr>
+          <tr>
+            <td>П1 тригер «2 робочих дні»</td>
+            <td class="dim">Вигадане конкретне число</td>
+            <td class="dim">Прибрано — конкретне число визначить притулок на старті</td>
+          </tr>
+          <tr>
+            <td>П1 деталь «весь день на роботі»</td>
+            <td class="dim">Вигаданий контекст впливав на набір compatibility-міток</td>
+            <td class="dim">Прибрано. Мітки: квартира / двір / діти / інші тварини — підтверджено. «Може бути сама вдома» — не вигадувати без перевірки.</td>
+          </tr>
+          <tr>
+            <td>Цитати персон</td>
+            <td class="dim">Частина мала [?], частина без маркування</td>
+            <td class="dim">Всі перемарковано «голос персони» — звучання підтверджено механізмами, дослівних UA-відгуків не зібрано</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+</div><!-- /page -->
+</body>
+</html>

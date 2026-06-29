@@ -47,6 +47,28 @@ Prytulok знімає бар'єр між людиною, що хоче взят�
 
 ---
 
+## Люди
+
+Чотири персони на основі user research (червень 2025). Деталі з підтвердженнями — у [personas.md](./research/personas.md) і [jtbd.md](./research/jtbd.md).
+
+| Персона | Ситуація | Роль |
+|---|---|---|
+| Маша | Хоче першу тварину — прийшла з Instagram, ще не певна | **PRIMARY** |
+| Олег і Катя | Хоче першу тварину — вже вирішили, шукають по критеріях | Secondary |
+| Діана | Вже є кішка — головний страх: конфлікт між тваринами | Secondary |
+| Ірина | Не може взяти — хоче допомогти як волонтер або донатор | Secondary |
+
+**Main job:** отримати відповідь «моя / не моя» без дзвінків і невизначеності.
+
+**Топ-3 jobs для MVP:**
+- **R2** Named caretaker — «Волонтер Оля знає Мурку 3 тижні» замість шаблонного «ласкава і грайлива»
+- **R4** Підтвердження після форми — хто і коли зв'яжеться; UA-ринок не закриває
+- **R1** Compatibility-мітки на картці — квартира / діти / інші тварини прямо в сітці
+
+→ [▸ Personas & JTBD HTML](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/personas.html)
+
+---
+
 ## Стек
 
 Next.js · TypeScript · Tailwind · Supabase · Resend · Vercel
@@ -57,9 +79,10 @@ Next.js · TypeScript · Tailwind · Supabase · Resend · Vercel
 
 ```bash
 npm install
-cp .env.example .env.local   # заповнити змінні середовища
 npm run dev
 ```
+
+Створи `.env.local` і заповни змінні (перелік у [CLAUDE.md](./CLAUDE.md#environment-variables)).
 
 Детальний контекст для розробки — у [CLAUDE.md](./CLAUDE.md).
 
@@ -69,10 +92,10 @@ npm run dev
 
 | Етап | Статус |
 |---|---|
-| Research | [▸ HTML](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/research.html) · [Зведений research](./research/research.md) · [Конкурентний аналіз](./research/competitive-analysis.md) · [Аналіз довіри до профілю](./research/trust-profile-analysis.md) |
+| Research | [▸ Research HTML](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/research.html) · [▸ Personas & JTBD HTML](https://htmlpreview.github.io/?https://github.com/yuliabokova/prytulok/blob/main/research/personas.html) · [Зведений research](./research/research.md) · [Конкурентний аналіз](./research/competitive-analysis.md) · [Аналіз довіри до профілю](./research/trust-profile-analysis.md) · [Персони](./research/personas.md) · [JTBD](./research/jtbd.md) |
 | Wireframes | — |
 | Concept | — |
-| Tokens | Чернетка |
+| Tokens | [Чернетка](./tokens/tokens.md) |
 | Components | — |
 | Design system | — |
 | Handoff | — |
